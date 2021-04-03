@@ -1,0 +1,13 @@
+@import "main";
+
+.main-container {
+  max-width: 600px;
+  margin: auto;
+
+  .main-container__yo-image {
+    border-radius: 50%;
+    max-width: 200px;
+    float: right;
+    margin-left: auto;
+  }
+}
