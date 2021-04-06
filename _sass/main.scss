@@ -18,8 +18,25 @@ $green: #859900;
 
 body {
   background: $base03;
-  color: $blue;
+  color: $base1;
   font-family: $bodyFont;
+
+  a {
+    color: $blue;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  ul li::before {
+    color: $yellow;
+    content: "\2022";
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
 }
 
 .text-green { color: $green; }
