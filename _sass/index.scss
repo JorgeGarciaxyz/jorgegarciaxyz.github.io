@@ -3,11 +3,21 @@
 .main-container {
   max-width: 600px;
   margin: auto;
+}
 
-  .main-container__yo-image {
-    border-radius: 50%;
-    max-width: 200px;
-    float: right;
-    margin-left: auto;
-  }
+.main-container__header {
+  padding-top: 20px;
+}
+
+.main-container__yo-image {
+  border-radius: 50%;
+  max-width: 150px;
+  float: right;
+  margin-left: auto;
+}
+
+.my-work-container {
+ h2 {
+   padding-top: 20px;
+ }
 }
