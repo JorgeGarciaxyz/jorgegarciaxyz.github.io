@@ -37,7 +37,18 @@ body {
     width: 1em;
     margin-left: -1em;
   }
+
+  .navbar {
+    display: flex;
+    justify-content: center;
+
+    a {
+      text-decoration: none;
+      padding: 0 10px;
+    }
+  }
 }
 
 .text-green { color: $green; }
 .text-orange { color: $orange; }
+.text-green { color: $green; }
