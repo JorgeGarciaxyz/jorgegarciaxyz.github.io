@@ -25,6 +25,10 @@ body {
     color: $blue;
   }
 
+  h1 {
+    color: $orange;
+  }
+
   ul {
     list-style: none;
   }
@@ -46,6 +50,11 @@ body {
       text-decoration: none;
       padding: 0 10px;
     }
+  }
+
+  .main-container {
+    max-width: 600px;
+    margin: auto;
   }
 }
 
