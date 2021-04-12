@@ -47,6 +47,11 @@ body {
       padding: 0 10px;
     }
   }
+
+  .main-container {
+    max-width: 600px;
+    margin: auto;
+  }
 }
 
 .text-green { color: $green; }
