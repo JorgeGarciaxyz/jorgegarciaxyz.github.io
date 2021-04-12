@@ -1,0 +1,7 @@
+<nav class="navbar">
+  {% for item in site.data.navigation %}
+    <a href="{{ item.link }}" {% if page.url == item.link %}style="text-decoration: underline !important;"{% endif %}>
+      {{ item.name }}
+    </a>
+  {% endfor %}
+</nav>
