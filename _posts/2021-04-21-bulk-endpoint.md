@@ -71,22 +71,20 @@ on each iteration.
 Note: The code here is not 100% accurate with the code in production, but its kinda similar.
 Most of this stuff is for test purposes.
 
-## Solution 1
+## 1st iteration of the solution
 ------
 
 ```ruby
 page_permissions_params.each do |page_permission|
-  PagePermission.create(
-    user_id: page_permission.user_id, page_id: page_permission.page_id
-  )
+  PagePermission.create(**page_permission)
 end
 ```
 
-I write the next simple test and ran it multiple times:
+I couldn't run rails performance tests, I found a weird issue on my test app. Given time
+constraints I write the next simple test but I know is probably not the best way to
+benchmark this problem.
 
 ```ruby
-# Note: this code sucks, I only wanted to provide context, not an example of a good performance test
-
 def setup
   @users = []
   @pages = []
@@ -97,26 +95,26 @@ def setup
     PagePermission.create(page: @pages.first, user: @users.last)
   end
 
-  @params = params
+  generate_params
 end
 
-def params
-  result = []
+def generate_params
+  @params = []
+
   @users.each do |user|
     @pages.each do |page|
-      result << { page_id: page.id, user_id: user.id }
+      @params << { page_id: page.id, user_id: user.id }
     end
   end
-  result
 end
 
-test "bulk benchmark" do
+test "Benchmark time" do
   puts Benchmark.measure {
     post path, params: { page_permissions: @params }
   }
 end
 
-test "bulk memory" do
+test "Benchmark memory" do
   Benchmark.memory do |x|
     x.report("endpoint") {
       post path, params: { page_permissions: @params }
@@ -124,10 +122,8 @@ test "bulk memory" do
   end
 end
 ```
-note: I couldn't run rails performance tests, I found a weird issue on my test app. I
-know this is probably not the best way to test this.
 
-Results:
+Results after running multiple times (around 5) and calculating means:
 ```
 time: .08s
 memory: 2.74mb
@@ -141,7 +137,9 @@ problem.
 - We have the n+1 insert problem
 - As the payload size grows, the performance gets worse
 
-## Solution 2
+Lets improve this
+
+## 2nd iteration
 ------
 
 Use [ActiveRecord-Import gem](https://github.com/zdennis/activerecord-import).
@@ -152,11 +150,11 @@ This gem execute a single insert statement.
 PagePermission.import(page_permissions_params, validate: true)
 ```
 
-Same test as the solution 1, we have much better results
+Running the same performance test, we have better results:
 
 ```
-time: .02s
-memory: 1.20mb
+time: .036s
+memory: 509k
 ```
 
 **The problem with this solution**
@@ -173,7 +171,30 @@ Alongside the mentioned problems, I'm omiting an important one.
 Why we're trying to insert records that we know for sure that shouldn't be created? Im talking
 about the existing `PagePermissions`. I mean, is for simplicity but if we can avoid it, I'll take it.
 
-**What we want to do on the next solution?**
+## 3rd iteration
+------
+
+Goals:
+
 - Notify the client which records can not be created due to other circumstances rather than
   the record already existing
 - If possible, not including existing record's attributes into the `insert` statement
+
+A simple solution can be the next one:
+
+```ruby
+page_permissions_params_without_existing_records = page_permissions_params.filter_map do |page_permission|
+  page_permission unless PagePermission.find_by(**page_permission)
+end
+
+PagePermission.import(page_permissions_params_without_existing_records, validate: true)
+```
+
+Performance results:
+```
+time: .042s
+memory: 652k
+```
+
+It's similar to the 2nd iteration but we have a big problem here; we're executing N+1 Select
+statements. So the performance would just get worse if the payload grows.
