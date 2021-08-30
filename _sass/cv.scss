@@ -1,0 +1,18 @@
+@import "main";
+
+.main-container {
+  max-width: 100% !important;
+}
+
+.cv-container {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+
+  object {
+    max-width: 1200px;
+    min-width: 800px;
+    min-height: 1000px;
+  }
+}
