@@ -1,4 +1,10 @@
-# Install
+# Jorge's Site
+
+https://www.jorgegarcia.xyz/
+
+# Setup
+Reqs:
+- Ruby version defined on `.tool-versions`
 
 ```
 bundle
