@@ -3,12 +3,43 @@ layout: default
 title: Blog
 css: blog
 ---
+
+<h1>Tech blog</h1>
+
+<p>
+  Here you can find my struggles while developing software.
+</p>
+
+<p>
+  Assume all entries are related with Ruby/Rails unless stated otherwise.
+</p>
+
+<p>
+  <b>What you can expect here?</b>
+
+  <ul>
+    <li>
+      Real life examples with applications.
+    </li>
+
+    <li>
+      Refactoring.
+    </li>
+
+    <li>
+      Mostly backend work.
+    </li>
+  </ul>
+</p>
+
 <h1>Latest Posts</h1>
 
 <ul>
   {% for post in site.posts %}
     <li>
-      <a href="{{ post.url }}">{{ post.title }}</h2>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+      <p><b>Published: {{post.date_published}}</b></p>
+      <p><b>Last Edited: {{post.last_edited}} </b></p>
     </li>
   {% endfor %}
 </ul>
