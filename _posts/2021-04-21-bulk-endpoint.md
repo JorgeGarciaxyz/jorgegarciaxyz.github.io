@@ -1,19 +1,18 @@
 ---
 layout: post
-title: Bulk endpoint accepting existing records
+title: Bulk endpoint accepting existing records without ids
 author: Jorge Garcia
 css: blog
+date_published: "2021-04-21"
+last_edited: "2023-02-19"
 ---
 
-In this article I'm gonna cover an interesting feature I developed a few months ago.
-
-This feature was developed in the thrillshare.com application using Rails on an API endpoint.
-
-*Note: I simplify some of the models so they're not 100% accurate from what we have*
+Creating and updating data in bulk is always tricky. And it can get worse if the data you receive
+does not contains ids (in the case of an update).
 
 ### Context
 
-On Thrillshare we have the model `PagePermission`, the user can have many permissions,
+We have the model `PagePermission`, the user can have many permissions,
 and each permission refers to a single page.
 
 
@@ -61,6 +60,46 @@ permissions, on the app, you only select a `user_id` alongside a `page_id`.
   ]
 }
 ```
+
+# Updated solution, using UPSERT and unique index constraints.
+
+Since I originally wrote this, I found a better way to solve this problem.
+
+# [Postgres unique constraints](https://www.techonthenet.com/postgresql/unique.php#:~:text=What%20is%20a%20unique%20constraint,combination%20of%20values%20is%20unique.)
+
+> A unique constraint is a single field or combination of fields that uniquely defines a record
+
+Using a unique constraint to validate the `page`  uniqueness coped to the `user` allow us to
+use Potgres' [UPSERT](https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-upsert/).
+
+The upsert allow us to insert `many` records and we can specify how to resolve the conflict,
+if any record is not respecting a validation.
+
+**Add the index**
+
+```ruby
+class MyMigration
+  def change
+    add_index :page_permissions,
+              [:page_id, :user_id],
+              unique: true,
+              algorithm: :concurrently
+  end
+end
+```
+
+And then we can use the [upsert all](https://apidock.com/rails/v6.0.0/ActiveRecord/Persistence/ClassMethods/upsert_all) method.
+
+```ruby
+PagePermission.upsert_all(
+  payload,
+  unique_by: [:page_id, :user_id]
+)
+```
+
+And that's it! I love finding simple solutions to hard problems.
+<br><br>
+## Disclaimer: deprecated work ahead, check it out if you want to see an over complicated solution.
 
 ## How to solve this problem?
 ------
