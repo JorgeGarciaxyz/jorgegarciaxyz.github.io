@@ -29,6 +29,14 @@ body {
     color: $orange;
   }
 
+  h2 {
+    color: $green
+  }
+
+  h3 {
+    color: $yellow
+  }
+
   ul {
     list-style: none;
   }
@@ -40,6 +48,10 @@ body {
     display: inline-block;
     width: 1em;
     margin-left: -1em;
+  }
+
+  i {
+    color: $cyan
   }
 
   .navbar {
